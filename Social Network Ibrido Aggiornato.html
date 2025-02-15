@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Network Ibrido Aggiornato</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        form, .section {
+            margin-bottom: 20px;
+        }
+        input, textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .post, .video {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        .post img, .video video {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Benvenuti nel Social Network Ibrido</h1>
+    </header>
+    <div class="container">
+        <h2>Modifica Profilo</h2>
+        <form id="profileForm">
+            <input type="text" id="userName" placeholder="Nome" required>
+            <input type="email" id="userEmail" placeholder="Email" required>
+            <button type="submit">Salva Modifiche</button>
+        </form>
+        <p id="profileMessage"></p>
+
+        <h2>Pubblica Video Lunghi</h2>
+        <form id="longVideoForm">
+            <textarea placeholder="Descrizione video..." required></textarea>
+            <input type="file" id="longVideoUpload" accept="video/*" required>
+            <button type="submit">Pubblica Video Lunghi</button>
+        </form>
+
+        <h2>Video Corti</h2>
+        <form id="shortVideoForm">
+            <textarea placeholder="Descrizione video corto..." required></textarea>
+            <input type="file" id="shortVideoUpload" accept="video/*" required>
+            <button type="submit">Pubblica Video Corti</button>
+        </form>
+
+        <h2>Sezione Scambi Culturali</h2>
+        <div id="culturalExchange" class="section"></div>
+
+        <h2>Video Lunghi Pubblicati</h2>
+        <div id="longVideosContainer" class="section"></div>
+
+        <h2>Video Corti Pubblicati</h2>
+        <div id="shortVideosContainer" class="section"></div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Social Network Ibrido. Tutti i diritti riservati.</p>
+    </footer>
+    <script>
+        let users = [];
+        let longVideos = [];
+        let shortVideos = [];
+        let culturalPosts = [
+            { text: "Post spagnolo: La paella è un piatto tradizionale.", country: "Spagna" },
+            { text: "Post cinese: Il tè è una parte fondamentale della cultura cinese.", country: "Cina" }
+        ];
+
+        document.getElementById('profileForm').onsubmit = function(event) {
+            event.preventDefault();
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            users.push({ name, email });
+            document.getElementById('profileMessage').innerText = 'Profilo aggiornato con successo!';
+        };
+
+        document.getElementById('longVideoForm').onsubmit = function(event) {
+            event.preventDefault();
+            const description = document.querySelector('#longVideoForm textarea').value;
+            const video = document.getElementById('longVideoUpload').files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const videoPost = { description, video: e.target.result };
+                longVideos.push(videoPost);
+                displayLongVideos();
+                document.querySelector('#longVideoForm textarea').value = '';
+                document.getElementById('longVideoUpload').value = '';
+            };
+            reader.readAsDataURL(video);
+        };
+
+        document.getElementById('shortVideoForm').onsubmit = function(event) {
+            event.preventDefault();
+            const description = document.querySelector('#shortVideoForm textarea').value;
+            const video = document.getElementById('shortVideoUpload').files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const videoPost = { description, video: e.target.result };
+                shortVideos.push(videoPost);
+                displayShortVideos();
+                document.querySelector('#shortVideoForm textarea').value = '';
+                document.getElementById('shortVideoUpload').value = '';
+            };
+            reader.readAsDataURL(video);
+        };
+
+        function displayLongVideos() {
+            const longVideosContainer = document.getElementById('longVideosContainer');
+            longVideosContainer.innerHTML = '';
+            longVideos.forEach(video => {
+                const videoDiv = document.createElement('div');
+                videoDiv.className = 'video';
+                videoDiv.innerHTML = `
+                    <p>${video.description}</p>
+                    <video controls src="${video.video}"></video>
+                `;
+                longVideosContainer.appendChild(videoDiv);
+            });
+        }
+
+        function displayShortVideos() {
+            const shortVideosContainer = document.getElementById('shortVideosContainer');
+            shortVideosContainer.innerHTML = '';
+            shortVideos.forEach(video => {
+                const videoDiv = document.createElement('div');
+                videoDiv.className = 'video';
+                videoDiv.innerHTML = `
+                    <p>${video.description}</p>
+                    <video controls src="${video.video}"></video>
+                `;
+                shortVideosContainer.appendChild(videoDiv);
+            });
+        }
+
+        function displayCulturalExchange() {
+            const culturalExchangeContainer = document.getElementById('culturalExchange');
+            culturalExchangeContainer.innerHTML = '';
+            culturalPosts.forEach(post => {
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post';
+                postDiv.innerHTML = `<p>${post.text} (${post.country})</p>`;
+                culturalExchangeContainer.appendChild(postDiv);
+            });
+        }
+
+        displayCulturalExchange(); // Mostra i post di scambio culturale all'avvio
+    </script>
+</body>
+</html>
